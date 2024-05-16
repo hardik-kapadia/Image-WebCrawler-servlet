@@ -1,19 +1,81 @@
 package com.eulerity.hackathon.imagefinder.Utils;
 
 import com.eulerity.hackathon.imagefinder.Exceptions.InvalidUrlException;
-//import org.apache.commons.validator.routines.UrlValidator;
+
+import java.util.Arrays;
 
 public class Utils {
 
-//    private static final UrlValidator urlValidator = new UrlValidator();
+    public static String getDomain(String url) throws InvalidUrlException {
 
-    public static void isValidUrl(String url) throws InvalidUrlException {
+        String domainUrl;
 
-        if (url.startsWith("http://"))
-            throw new InvalidUrlException("Please provide a secure URL");
+        String[] parts = url.split("/");
 
-        if (!url.startsWith("https://"))
-            throw new InvalidUrlException("URL needs to start with https://");
+        if (url.matches("^.*://.*$")) {
+
+            if (!url.startsWith("https://"))
+                throw new InvalidUrlException("Please provide a secure URL");
+
+            domainUrl = parts[2];
+
+        } else {
+
+            if (!url.matches("^[^/\\:]+\\..+(\\..+)?.*"))
+                throw new InvalidUrlException();
+
+            domainUrl = parts[0];
+        }
+
+        String[] domainParts = domainUrl.split("\\.");
+
+        System.out.println("For url: " + url + ", domain: " + domainUrl + ", domainParts: " + Arrays.toString(domainParts));
+
+        if (domainParts.length < 2)
+            throw new InvalidUrlException();
+
+        if (domainParts.length == 2)
+            return domainParts[0];
+        else
+            return domainParts[1];
+
 
     }
+
+    public static String getSubDomain(String url) throws InvalidUrlException {
+
+        System.out.println("Now processing: " + url);
+
+        String domainUrl;
+
+        String[] parts = url.split("/");
+
+        if (url.matches("^.*://.*$")) {
+
+            if (!url.startsWith("https://"))
+                throw new InvalidUrlException("Please provide a secure URL");
+
+            if (parts.length == 2)
+                return "";
+
+            return parts[2];
+
+        } else {
+
+            if (!url.matches("^[^/\\:]+\\..+(\\..+)?.*"))
+                throw new InvalidUrlException();
+
+            StringBuilder sb = new StringBuilder();
+
+            if (parts.length == 1)
+                return "";
+
+            for (int i = 1; i < parts.length; i++)
+                sb.append(parts[i]).append("/");
+
+            return sb.substring(0, sb.length() - 1);
+        }
+
+    }
+
 }

@@ -48,14 +48,14 @@ public class ImageFinder extends HttpServlet {
 //        resp.getWriter().print(GSON.toJson(testImages));
 
 //         Validating the URL
-        try {
-            Utils.isValidUrl(url);
-        } catch (InvalidUrlException e) {
-            resp.setStatus(400);
-            Map<String, String> error = new HashMap<>();
-            error.put("Error", "Invalid URL " + e.getLocalizedMessage());
-            resp.getWriter().write(GSON.toJson(error));
-        }
+//        try {
+//            Utils.isValidUrl(url);
+//        } catch (InvalidUrlException e) {
+//            resp.setStatus(400);
+//            Map<String, String> error = new HashMap<>();
+//            error.put("Error", "Invalid URL " + e.getLocalizedMessage());
+//            resp.getWriter().write(GSON.toJson(error));
+//        }
 
         System.out.println("Got request of:" + path + " with query param:" + url);
 

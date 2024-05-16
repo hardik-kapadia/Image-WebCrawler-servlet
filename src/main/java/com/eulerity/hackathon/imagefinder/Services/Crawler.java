@@ -3,6 +3,7 @@ package com.eulerity.hackathon.imagefinder.Services;
 import com.eulerity.hackathon.imagefinder.Exceptions.InvalidUrlException;
 import com.eulerity.hackathon.imagefinder.Exceptions.UrlConnectionError;
 
+import com.eulerity.hackathon.imagefinder.Utils.Utils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -16,17 +17,16 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
-public class SinglePageCrawler implements Callable<List<String>> {
+public class Crawler implements Callable<List<String>> {
 
     private static final int MAX_DEPTH = 2;
-    private static final RegexHandler regexHandler = new RegexHandler();
 
     private final String url;
     private final int depth;
     private final ExecutorService executorService;
     private final Set<String> visited;
 
-    public SinglePageCrawler(String url, int depth, ExecutorService executorService, Set<String> visited) {
+    public Crawler(String url, int depth, ExecutorService executorService, Set<String> visited) {
 
         System.out.println("Created new Crawler with url: " + url + " and depth: " + depth + " and visited worth: " + visited.size());
         this.visited = Collections.synchronizedSet(visited);
@@ -55,7 +55,7 @@ public class SinglePageCrawler implements Callable<List<String>> {
             throw new UrlConnectionError("Cannot connect to " + this.url);
         }
 
-        String domain = regexHandler.getDomain(url);
+        String domain = Utils.getDomain(url);
         List<Future<List<String>>> futures = new ArrayList<>();
 
         if (depth < MAX_DEPTH && this.visited.size() < 20) {
@@ -71,8 +71,8 @@ public class SinglePageCrawler implements Callable<List<String>> {
                 String tempSubDomain;
 
                 try {
-                    tempDomain = regexHandler.getDomain(internalLink);
-                    tempSubDomain = regexHandler.getSubDomain(internalLink);
+                    tempDomain = Utils.getDomain(internalLink);
+                    tempSubDomain = Utils.getSubDomain(internalLink);
                 } catch (InvalidUrlException e) {
                     System.out.println("Invalid URL: " + internalLink);
                     continue;
@@ -83,16 +83,16 @@ public class SinglePageCrawler implements Callable<List<String>> {
 
                 System.out.println("For " + internalLink + ", domain: " + tempDomain + " and subdomain: " + tempSubDomain);
 
-                if (tempDomain.equals(domain) && !tempSubDomain.startsWith("#")) {
+                if (tempDomain.equals(domain)) {
                     synchronized (visited) {
                         if (!visited.contains(internalLink)) {
                             visited.add(internalLink);
 
                             System.out.println("Processing " + internalLink);
 
-                            SinglePageCrawler sgp;
+                            Crawler sgp;
 
-                            sgp = new SinglePageCrawler(internalLink, depth + 1, executorService, visited);
+                            sgp = new Crawler(internalLink, depth + 1, executorService, visited);
 
                             Future<List<String>> ft = executorService.submit(sgp);
 

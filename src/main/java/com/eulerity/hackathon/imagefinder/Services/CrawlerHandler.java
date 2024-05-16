@@ -26,10 +26,10 @@ public class CrawlerHandler {
 
         Set<String> visited = Collections.synchronizedSet(new HashSet<>());
 
-        SinglePageCrawler sgp;
-
-        sgp = new SinglePageCrawler(url, 0, executorService, visited);
-
+        Crawler sgp;
+        synchronized (visited) {
+            sgp = new Crawler(url, 0, executorService, visited);
+        }
         Future<List<String>> ft = executorService.submit(sgp);
 
         List<String> allImages = ft.get();

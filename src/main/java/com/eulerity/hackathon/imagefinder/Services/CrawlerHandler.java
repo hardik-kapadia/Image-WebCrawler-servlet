@@ -24,6 +24,7 @@ public class CrawlerHandler {
 
         Set<String> visited = Collections.synchronizedSet(new HashSet<>());
 
+        url = url.trim();
         Crawler sgp;
         synchronized (visited) {
             sgp = new Crawler(url, 0, executorService, visited);

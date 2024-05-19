@@ -47,6 +47,8 @@ public class ImageFinder extends HttpServlet {
 
         String url = req.getParameter("url");
 
+        System.out.println("URL rcvd: " + url);
+
         try {
             ConcurrentHashMap<String, CopyOnWriteArrayList<String>> images = crawlerHandler.explore(url);
             resp.getWriter().print(GSON.toJson(images));

@@ -177,7 +177,10 @@ public class Crawler implements Callable<ConcurrentHashMap<String, CopyOnWriteAr
                 }
 
             } catch (InterruptedException | ExecutionException e) {
-                System.err.println(e.getMessage());
+                if (!e.getCause().getMessage().equals("Already explored too many urls")) {
+                    System.err.println(e.getMessage());
+                }
+
             }
         }
 

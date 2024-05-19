@@ -60,9 +60,6 @@ public class Utils {
 
     public static String getSubDomain(String url) throws InvalidUrlException {
 
-        System.out.println("Now processing: " + url);
-
-
         String[] parts = url.split("/");
 
         if (url.matches("^.*://.*$")) {

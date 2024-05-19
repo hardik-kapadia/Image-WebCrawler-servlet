@@ -1,6 +1,6 @@
 # Multithreaded web crawler using Java
 
-[![Github](https://img.icons8.com/ios-glyphs/30/github.png)](https://github.com/thecoderenroute/Image-WebCrawler-servlet)
+[![Github](https://img.icons8.com/3d-fluency/94/github.png)](https://github.com/thecoderenroute/Image-WebCrawler-servlet)
 
 ## ImageFinder Goal
 

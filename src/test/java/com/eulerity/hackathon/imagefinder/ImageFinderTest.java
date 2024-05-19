@@ -1,7 +1,6 @@
 package com.eulerity.hackathon.imagefinder;
 
 
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.HashSet;
@@ -12,7 +11,6 @@ import com.eulerity.hackathon.imagefinder.Exceptions.UrlConnectionError;
 import com.eulerity.hackathon.imagefinder.Services.Crawler;
 import com.eulerity.hackathon.imagefinder.Utils.Utils;
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,21 +18,38 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.junit.Before;
-import org.junit.rules.ExpectedException;
 import org.mockito.Mockito;
 
 import static org.junit.Assert.*;
 
+/**
+ * The type Image finder test.
+ */
 public class ImageFinderTest {
 
-    @Rule
-    public final ExpectedException exception = ExpectedException.none();
 
+    /**
+     * The Request.
+     */
     public HttpServletRequest request;
+    /**
+     * The Response.
+     */
     public HttpServletResponse response;
+    /**
+     * The Sw.
+     */
     public StringWriter sw;
+    /**
+     * The Session.
+     */
     public HttpSession session;
 
+    /**
+     * Sets up.
+     *
+     * @throws Exception the exception
+     */
     @Before
     public void setUp() throws Exception {
 
@@ -52,42 +67,40 @@ public class ImageFinderTest {
         Mockito.when(request.getSession()).thenReturn(session);
     }
 
-//    @Test
-//    public void test() throws IOException, ServletException {
-//        Mockito.when(request.getServletPath()).thenReturn("/main");
-//        new ImageFinder().doPost(request, response);
-//        Assert.assertEquals(new Gson().toJson(ImageFinder.testImages), sw.toString());
-//    }
-
+    /**
+     * Test valid url domain.
+     *
+     * @throws InvalidUrlException the invalid url exception
+     */
     @Test
-    public void testValidUrlDomain() {
+    public void testValidUrlDomain() throws InvalidUrlException {
         String url = "https://www.google.com/foo/foo/foo?q=p";
 
-        try {
-            String domain = Utils.getDomain(url);
-            Assert.assertEquals("google", domain);
-        } catch (InvalidUrlException e) {
-            e.printStackTrace();
-        }
+        String domain = Utils.getDomain(url);
+        Assert.assertEquals("google", domain);
 
     }
 
+    /**
+     * Test invalid url domain.
+     */
     @Test
     public void testInvalidUrlDomain() {
-        String url = "http://google/foo/foo/foo?q=p";
+        String url = "https://google/foo/foo/foo?q=p";
 
         assertThrows(
                 "Invalid URL",
                 InvalidUrlException.class,
-                () -> {
-                    Utils.getDomain(url);
-                }
+                () -> Utils.getDomain(url)
         );
 
     }
 
+    /**
+     * Test Invalid url connection.
+     */
     @Test
-    public void InvalidUrlConnection() {
+    public void testInvalidUrlConnection() {
 
         String url = "https://abcdefhi.buh/";
 

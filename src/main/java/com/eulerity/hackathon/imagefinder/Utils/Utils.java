@@ -2,8 +2,6 @@ package com.eulerity.hackathon.imagefinder.Utils;
 
 import com.eulerity.hackathon.imagefinder.Exceptions.InvalidUrlException;
 
-import java.util.Arrays;
-
 public class Utils {
 
     public static String getDomain(String url) throws InvalidUrlException {
@@ -66,7 +64,6 @@ public class Utils {
 
         System.out.println("Now processing: " + url);
 
-        String domainUrl;
 
         String[] parts = url.split("/");
 

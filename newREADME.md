@@ -75,7 +75,7 @@ of the hardware available.
 │       └───java.com.eulerity.hackathon
 │           └───imagefinder
 |               └───ImageFinderTest - contains all the tests
-└───target
+└───target: contains the generated classes and test reports
     
 ```
 

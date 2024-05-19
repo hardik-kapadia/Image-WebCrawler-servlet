@@ -29,7 +29,7 @@ public class Utils {
 
         String[] domainParts = domainUrl.split("\\.");
 
-        System.out.println("For url: " + url + ", domain: " + domainUrl + ", domainParts: " + Arrays.toString(domainParts));
+//        System.out.println("For url: " + url + ", domain: " + domainUrl + ", domainParts: " + Arrays.toString(domainParts));
 
         if (domainParts.length < 2)
             throw new InvalidUrlException();
@@ -40,6 +40,26 @@ public class Utils {
             return domainParts[1];
 
 
+    }
+
+    public static String getFullDomain(String url) throws InvalidUrlException {
+
+        String[] parts = url.split("/");
+
+        if (url.matches("^.*://.*$")) {
+
+            if (!url.startsWith("https://"))
+                throw new InvalidUrlException("Please provide a secure URL");
+
+            return "https://" + parts[2];
+
+        } else {
+
+            if (!url.matches("^[^/\\:]+\\..+(\\..+)?.*"))
+                throw new InvalidUrlException();
+
+            return parts[0];
+        }
     }
 
     public static String getSubDomain(String url) throws InvalidUrlException {

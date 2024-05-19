@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 
 import javax.servlet.ServletException;
@@ -13,9 +15,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.eulerity.hackathon.imagefinder.Exceptions.InvalidUrlException;
 import com.eulerity.hackathon.imagefinder.Services.CrawlerHandler;
-import com.eulerity.hackathon.imagefinder.Utils.Utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -27,7 +27,7 @@ public class ImageFinder extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
 
-    protected static final Gson GSON = new GsonBuilder().create();
+    protected static final Gson GSON = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
 
     //This is just a test array
     public static final String[] testImages = {
@@ -45,28 +45,21 @@ public class ImageFinder extends HttpServlet {
         resp.setContentType("text/json");
         String path = req.getServletPath();
         String url = req.getParameter("url");
-//        resp.getWriter().print(GSON.toJson(testImages));
 
-//         Validating the URL
-//        try {
-//            Utils.isValidUrl(url);
-//        } catch (InvalidUrlException e) {
-//            resp.setStatus(400);
-//            Map<String, String> error = new HashMap<>();
-//            error.put("Error", "Invalid URL " + e.getLocalizedMessage());
-//            resp.getWriter().write(GSON.toJson(error));
-//        }
 
         System.out.println("Got request of:" + path + " with query param:" + url);
 
         try {
-            List<String> images = crawlerHandler.explore(url);
+            ConcurrentHashMap<String, CopyOnWriteArrayList<String>> images = crawlerHandler.explore(url);
             System.out.println("Explored: " + images);
-            resp.getWriter().print(GSON.toJson(images));
+            String json = GSON.toJson(images);
+            System.out.println("\n\n--------------------------------\n\n");
+            System.out.println(json);
+            resp.getWriter().print(json);
         } catch (ExecutionException | InterruptedException e) {
             resp.setStatus(500);
             Map<String, String> error = new HashMap<>();
-            error.put("Error", "Faced server error " + e.getLocalizedMessage());
+            error.put("Error", "Faced server error " + e.getMessage());
             e.printStackTrace();
             resp.getWriter().write(GSON.toJson(error));
         }

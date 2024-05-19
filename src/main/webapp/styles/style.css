@@ -1,0 +1,78 @@
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css');
+html, body {
+    height: 100vh;
+}
+body {
+    font-family: Arial, sans-serif;
+    background-color: #121212;
+    color: #40C0C0;
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    justify-items: flex-start;
+    min-height: 100vh;
+}
+
+/* Importing a search icon from Font Awesome */
+.search {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /*height: 100vh; !* Centering the search bar vertically *!*/
+    margin-top: 30px;
+    width: 70%
+}
+
+.input {
+    position: relative;
+    width: 100%;
+    margin: auto;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 10px 40px 10px 15px; /* Adjusting padding for the search icon */
+    border-radius: 25px; /* Rounded corners */
+    border: none;
+    background: rgba(255, 255, 255, 0.2); /* Translucent background */
+    color: #ffffff; /* Light text color */
+    font-size: 16px;
+    outline: none;
+}
+
+input[type="text"]::placeholder {
+    color: #cccccc; /* Light placeholder text color */
+}
+
+button {
+    position: absolute;
+    right: 0.5em;
+    top: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    width: 3em; /* Relative size for the button */
+    height: 3em; /* Relative size for the button */
+}
+
+button:focus {
+    outline: none;
+}
+
+.output {
+    display: flex;
+    flex-grow: 1;
+    flex-shrink: 0;
+    flex-basis: auto;
+}
+
+.footer {
+    bottom: 0;
+    width: 100%;
+    background-color: rgba(36, 35, 35, 0.7); /* Dark translucent background */
+    color: white;
+    text-align: center;
+    padding: 1em 0;
+    font-size: 1em;
+}

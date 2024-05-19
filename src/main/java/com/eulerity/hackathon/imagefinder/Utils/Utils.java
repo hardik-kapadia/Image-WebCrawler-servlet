@@ -27,8 +27,6 @@ public class Utils {
 
         String[] domainParts = domainUrl.split("\\.");
 
-//        System.out.println("For url: " + url + ", domain: " + domainUrl + ", domainParts: " + Arrays.toString(domainParts));
-
         if (domainParts.length < 2)
             throw new InvalidUrlException();
 

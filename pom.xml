@@ -43,12 +43,6 @@
             <artifactId>jstl</artifactId>
             <version>1.2</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/commons-validator/commons-validator -->
-        <!--    <dependency>-->
-        <!--      <groupId>commons-validator</groupId>-->
-        <!--      <artifactId>commons-validator</artifactId>-->
-        <!--      <version>1.8.0</version>-->
-        <!--    </dependency>-->
 
         <dependency>
             <groupId>org.jsoup</groupId>
@@ -73,6 +67,14 @@
             <version>2.0.2-beta</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-webapp-logging -->
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-webapp-logging</artifactId>
+            <version>9.4.27</version>
+        </dependency>
+
     </dependencies>
 
     <build>

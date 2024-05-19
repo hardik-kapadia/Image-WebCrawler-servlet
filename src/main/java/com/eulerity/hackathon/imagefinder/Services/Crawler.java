@@ -14,16 +14,14 @@ import java.io.IOException;
 
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.logging.Logger;
 
 /**
  * The type Crawler.
  */
 public class Crawler implements Callable<ConcurrentHashMap<String, CopyOnWriteArrayList<String>>> {
 
-    private static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-
     private static final int MAX_DEPTH = 2;
+    private static final int MAX_PAGES = 50;
 
     private final String url;
     private final int depth;
@@ -40,7 +38,6 @@ public class Crawler implements Callable<ConcurrentHashMap<String, CopyOnWriteAr
      */
     public Crawler(String url, int depth, ExecutorService executorService, Set<String> visited) {
 
-        logger.finer("Created new Crawler with url: " + url + " and depth: " + depth + " and visited worth: " + visited.size());
         this.visited = Collections.synchronizedSet(visited);
         visited.add(url);
         this.url = url;
@@ -59,11 +56,11 @@ public class Crawler implements Callable<ConcurrentHashMap<String, CopyOnWriteAr
 
         // To ensure we don't overboard the website, if we;ve visited more the 50 urls, stop exploration
         synchronized (visited) {
-            if (visited.size() >= 50)
+            if (visited.size() >= MAX_PAGES)
                 throw new ExplorationMaxedOut();
-
         }
 
+        // Initializing it beforehand to ensure scope is not limited
         Document document;
 
         // Try to connect to the specified url or throw an exception
@@ -79,11 +76,11 @@ public class Crawler implements Callable<ConcurrentHashMap<String, CopyOnWriteAr
         Map<String, Future<ConcurrentHashMap<String, CopyOnWriteArrayList<String>>>> futures = new HashMap<>();
 
 
-        if (depth < MAX_DEPTH && this.visited.size() < 20) {
+        if (depth < MAX_DEPTH && this.visited.size() < MAX_PAGES) {
 
-            Elements elems = document.select("a[href]");
+            Elements elements = document.select("a[href]");
 
-            for (Element elem : elems) {
+            for (Element elem : elements) {
                 String internalLink = elem.attr("abs:href");
 
                 if (internalLink.isEmpty() || internalLink.replace(" ", "").isEmpty())
@@ -180,7 +177,7 @@ public class Crawler implements Callable<ConcurrentHashMap<String, CopyOnWriteAr
                 }
 
             } catch (InterruptedException | ExecutionException e) {
-                logger.throwing("Crawler", "call", e);
+                System.err.println(e.getMessage());
             }
         }
 

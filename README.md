@@ -53,10 +53,10 @@ First, a single thread job is created for the source url. The flow of a job is a
 This is optimal as it strikes a balance between limiting the number of unnecessary calls and utilizing the full extent
 of the hardware available.
 
-## Structure of project
+## Structure of the project
 
 ```
-
+imagefinder
 ├───src
 │   ├───main
 │   │   ├───java.com.eulerity.hackathon
@@ -78,6 +78,8 @@ of the hardware available.
 └───target: contains the generated classes and test reports
     
 ```
+
+The main class is Crawler
 
 ## Instructions to test
 

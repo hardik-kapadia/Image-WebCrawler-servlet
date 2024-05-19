@@ -1,7 +1,7 @@
 <html lang="">
 <head>
     <title>Multi-threaded web crawler</title>
-    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
@@ -62,6 +62,8 @@
 
             const title = document.createElement("div")
             title.style.color = "#40C0C0"
+            title.style.marginTop = "10px"
+            title.style.marginBottom = "5px"
             title.innerHTML = `Unique images from ${page}`
 
             sub.appendChild(title)

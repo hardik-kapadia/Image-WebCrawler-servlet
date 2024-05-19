@@ -15,8 +15,14 @@ import java.io.IOException;
 import java.security.KeyStore;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.logging.Logger;
 
+/**
+ * The type Crawler.
+ */
 public class Crawler implements Callable<ConcurrentHashMap<String, CopyOnWriteArrayList<String>>> {
+
+    private static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     private static final int MAX_DEPTH = 2;
 
@@ -25,15 +31,21 @@ public class Crawler implements Callable<ConcurrentHashMap<String, CopyOnWriteAr
     private final ExecutorService executorService;
     private final Set<String> visited;
 
+    /**
+     * Instantiates a new Crawler.
+     *
+     * @param url             the url
+     * @param depth           the depth
+     * @param executorService the executor service
+     * @param visited         the visited
+     */
     public Crawler(String url, int depth, ExecutorService executorService, Set<String> visited) {
 
-        System.out.println("Created new Crawler with url: " + url + " and depth: " + depth + " and visited worth: " + visited.size());
+        logger.finer("Created new Crawler with url: " + url + " and depth: " + depth + " and visited worth: " + visited.size());
         this.visited = Collections.synchronizedSet(visited);
         visited.add(url);
         this.url = url;
-
         this.depth = depth;
-
         this.executorService = executorService;
     }
 
@@ -46,6 +58,7 @@ public class Crawler implements Callable<ConcurrentHashMap<String, CopyOnWriteAr
     @Override
     public ConcurrentHashMap<String, CopyOnWriteArrayList<String>> call() throws Exception {
 
+        // To ensure we don't overboard the website, if we;ve visited more the 50 urls, stop exploration
         synchronized (visited) {
             if (visited.size() >= 50)
                 throw new ExplorationMaxedOut();
@@ -54,6 +67,7 @@ public class Crawler implements Callable<ConcurrentHashMap<String, CopyOnWriteAr
 
         Document document;
 
+        // Try to connect to the specified url or throw an exception
         try {
             document = Jsoup.connect(this.url).followRedirects(true).get();
         } catch (IOException e) {
@@ -62,10 +76,12 @@ public class Crawler implements Callable<ConcurrentHashMap<String, CopyOnWriteAr
 
         String domain = Utils.getDomain(url);
         String fullDomain = Utils.getFullDomain(url);
+
         Map<String, Future<ConcurrentHashMap<String, CopyOnWriteArrayList<String>>>> futures = new HashMap<>();
 
 
         if (depth < MAX_DEPTH && this.visited.size() < 20) {
+
             Elements elems = document.select("a[href]");
 
             for (Element elem : elems) {
@@ -88,19 +104,16 @@ public class Crawler implements Callable<ConcurrentHashMap<String, CopyOnWriteAr
                     internalLink = tempDomain;
                 }
 
-//                System.out.println("For " + internalLink + ", domain: " + tempDomain + " and subdomain: " + tempSubDomain);
-
                 if (tempDomain.equals(domain)) {
                     synchronized (visited) {
                         if (!visited.contains(internalLink)) {
                             visited.add(internalLink);
 
-//                            System.out.println("Processing " + internalLink);
-
                             Crawler sgp;
 
                             sgp = new Crawler(internalLink, depth + 1, executorService, visited);
 
+                            // recursively create jobs and push them to the executorService
                             Future<ConcurrentHashMap<String, CopyOnWriteArrayList<String>>> ft = executorService.submit(sgp);
 
                             futures.put(internalLink, ft);
@@ -110,10 +123,11 @@ public class Crawler implements Callable<ConcurrentHashMap<String, CopyOnWriteAr
             }
         }
 
-//        CopyOnWriteArrayList<String> images = new CopyOnWriteArrayList<>();
+        // explore the current page for images
 
         ConcurrentHashMap<String, CopyOnWriteArrayList<String>> images = new ConcurrentHashMap<>();
         ConcurrentHashMap.KeySetView<String, Boolean> addedImages = ConcurrentHashMap.newKeySet();
+
         images.put(url, new CopyOnWriteArrayList<>());
 
         Elements imgElems = document.select("img[src]");
@@ -136,6 +150,9 @@ public class Crawler implements Callable<ConcurrentHashMap<String, CopyOnWriteAr
             }
 
         }
+
+        if (images.get(url).isEmpty())
+            images.remove(url);
 
         Set<String> keys = futures.keySet();
 
@@ -164,7 +181,7 @@ public class Crawler implements Callable<ConcurrentHashMap<String, CopyOnWriteAr
                 }
 
             } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
+                logger.throwing("Crawler", "call", e);
             }
         }
 

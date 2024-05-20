@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServletResponse;
 import com.eulerity.hackathon.imagefinder.Services.CrawlerHandler;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
 @WebServlet(
         name = "ImageFinder",
         urlPatterns = {"/main"}
@@ -51,6 +50,7 @@ public class ImageFinder extends HttpServlet {
 
         try {
             ConcurrentHashMap<String, CopyOnWriteArrayList<String>> images = crawlerHandler.explore(url);
+            resp.setHeader("og-url", url);
             resp.getWriter().print(GSON.toJson(images));
         } catch (ExecutionException | InterruptedException e) {
             resp.setStatus(500);

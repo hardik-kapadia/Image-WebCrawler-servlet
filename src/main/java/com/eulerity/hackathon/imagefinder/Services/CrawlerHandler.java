@@ -6,7 +6,6 @@ import java.util.Set;
 import java.util.concurrent.*;
 
 
-
 /**
  * The type Crawler handler.
  */
@@ -33,6 +32,7 @@ public class CrawlerHandler {
 
         ConcurrentHashMap<String, CopyOnWriteArrayList<String>> allImages = ft.get();
 
+        System.out.println("Finished with " + url);
         return allImages;
     }
 

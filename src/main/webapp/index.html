@@ -26,7 +26,8 @@
 </div>
 
 <div class="footer">
-    <p>Made by <a href="http://thecoderenroute.github.io">Hardik Kapadia</a> as a part of the Eulerity Take-hom test</p>
+    <p>Made by <a href="http://thecoderenroute.github.io">Hardik Kapadia</a> as a part of the Eulerity Take-home test
+    </p>
 </div>
 
 <script>
@@ -43,18 +44,49 @@
             }
             let response = xhr.responseText ? JSON.parse(xhr.responseText)
                 : null;
+            let og = xhr.getResponseHeader("og-url");
             if (callback) {
-                callback(response);
+                callback(response, og);
             }
         }
     }
 
-    updateList = function (response) {
+    updateList = function (response, og) {
         console.log(response)
 
         resultList.innerHTML = '';
 
+        let ogImages = response[og];
+
+        if (ogImages) {
+
+            const mainSub = document.createElement("div");
+            mainSub.classList.add("single-result")
+            mainSub.style.margin = "20px";
+
+            const mainTitle = document.createElement("div")
+            mainTitle.style.color = "#40C0C0"
+            mainTitle.style.marginTop = "10px"
+            mainTitle.style.marginBottom = "5px"
+            mainTitle.innerHTML = `Unique images from ${og}`
+
+            mainSub.appendChild(mainTitle)
+
+            for (const image in ogImages) {
+                const img = document.createElement("img");
+                img.width = 200;
+                img.src = ogImages[image]
+                mainSub.appendChild(img)
+            }
+
+            resultList.appendChild(mainSub);
+
+        }
+
         for (const [page, images] of Object.entries(response)) {
+
+            if (page === og)
+                continue;
 
             const sub = document.createElement("div");
             sub.classList.add("single-result")
